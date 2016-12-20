@@ -318,9 +318,9 @@
 #endif
 
 // The pullups are needed if you directly connect a mechanical endswitch between the signal and ground pins.
-const bool X_MIN_ENDSTOP_INVERTING = false; // set to true to invert the logic of the endstop.
-const bool Y_MIN_ENDSTOP_INVERTING = false; // set to true to invert the logic of the endstop.
-const bool Z_MIN_ENDSTOP_INVERTING = false; // set to true to invert the logic of the endstop.
+const bool X_MIN_ENDSTOP_INVERTING = true;  // we have no X_MIN endstop
+const bool Y_MIN_ENDSTOP_INVERTING = true;  // we have no Y_MIN endstop
+const bool Z_MIN_ENDSTOP_INVERTING = true;  // Z_MIN endstop is our Z probe and the microswitch is wired NO
 const bool X_MAX_ENDSTOP_INVERTING = false; // set to true to invert the logic of the endstop.
 const bool Y_MAX_ENDSTOP_INVERTING = false; // set to true to invert the logic of the endstop.
 const bool Z_MAX_ENDSTOP_INVERTING = false; // set to true to invert the logic of the endstop.
@@ -378,16 +378,18 @@ const bool Z_MAX_ENDSTOP_INVERTING = false; // set to true to invert the logic o
 #ifdef ENABLE_AUTO_BED_LEVELING
 
   // these are the positions on the bed to do the probing
-  #define DELTA_PROBABLE_RADIUS (DELTA_PRINTABLE_RADIUS-20)
+  // the probable radius below has been reduced to 60mm inside the printable radius
+  #define DELTA_PROBABLE_RADIUS (DELTA_PRINTABLE_RADIUS-60)
   #define LEFT_PROBE_BED_POSITION -DELTA_PROBABLE_RADIUS
   #define RIGHT_PROBE_BED_POSITION DELTA_PROBABLE_RADIUS
   #define BACK_PROBE_BED_POSITION DELTA_PROBABLE_RADIUS
   #define FRONT_PROBE_BED_POSITION -DELTA_PROBABLE_RADIUS
 
   // these are the offsets to the probe relative to the extruder tip (Hotend - Probe)
-  #define X_PROBE_OFFSET_FROM_EXTRUDER 0
-  #define Y_PROBE_OFFSET_FROM_EXTRUDER 0
-  #define Z_PROBE_OFFSET_FROM_EXTRUDER 0.3
+  // the offsets below are for my own basic microswitch probe, mounted near the fan
+  #define X_PROBE_OFFSET_FROM_EXTRUDER -9
+  #define Y_PROBE_OFFSET_FROM_EXTRUDER 29
+  #define Z_PROBE_OFFSET_FROM_EXTRUDER -2.7
 
   #define Z_RAISE_BEFORE_HOMING 4       // (in mm) Raise Z before homing (G28) for Probe Clearance.
                                         // Be sure you have this distance over your Z_MAX_POS in case
@@ -449,7 +451,9 @@ const bool Z_MAX_ENDSTOP_INVERTING = false; // set to true to invert the logic o
 // For deltabots this means top and center of the Cartesian print volume.
 #define MANUAL_X_HOME_POS 0
 #define MANUAL_Y_HOME_POS 0
-#define MANUAL_Z_HOME_POS 300  // 打印机归位时，喷嘴到平台的高度。For delta: Distance between nozzle and print surface after homing. 
+//#define MANUAL_Z_HOME_POS 300  // For delta: Distance between nozzle and print surface after homing. 
+//#define MANUAL_Z_HOME_POS 334  // With standard bed on original mounting blocks
+#define MANUAL_Z_HOME_POS 323.4  // With heated bed on custom mounting blocks
 
 //// MOVEMENT SETTINGS
 #define NUM_AXIS 4 // The axis order in all axis related arrays is X, Y, Z, E
