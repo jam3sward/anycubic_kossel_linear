@@ -37,7 +37,7 @@ void _EEPROM_readData(int &pos, uint8_t* value, uint8_t size)
 // the default values are used whenever there is a change to the data, to prevent
 // wrong data being written to the variables.
 // ALSO:  always make sure the variables in the Store and retrieve sections are in the same order.
-#define EEPROM_VERSION "V10"
+#define EEPROM_VERSION "V11"
 
 #ifdef EEPROM_SETTINGS
 void Config_StoreSettings() 
@@ -86,6 +86,15 @@ void Config_StoreSettings()
     int lcd_contrast = 32;
   #endif
   EEPROM_WRITE_VAR(i,lcd_contrast);
+  
+  #ifdef SAVE_G29_CORRECTION_MATRIX
+    #ifdef NONLINEAR_BED_LEVELING
+      for (int y = 0; y < ACCURATE_BED_LEVELING_POINTS; y++)
+        for (int x = 0; x < ACCURATE_BED_LEVELING_POINTS; x++)
+          EEPROM_WRITE_VAR(i, bed_level[x][y]);
+    #endif//NONLINEAR_BED_LEVELING
+  #endif//SAVE_G29_CORRECTION_MATRIX
+  
   char ver2[4]=EEPROM_VERSION;
   i=EEPROM_OFFSET;
   EEPROM_WRITE_VAR(i,ver2); // validate data
@@ -167,6 +176,14 @@ void Config_PrintSettings()
     SERIAL_ECHOPAIR(" D" ,unscalePID_d(Kd));
     SERIAL_ECHOLN(""); 
 #endif
+#ifdef SAVE_G29_CORRECTION_MATRIX
+  #ifdef NONLINEAR_BED_LEVELING
+    SERIAL_ECHO_START;
+    SERIAL_ECHOLNPGM("Bed level matrix:");
+    SERIAL_ECHO_START;
+    print_bed_level();
+  #endif//NONLINEAR_BED_LEVELING
+#endif//SAVE_G29_CORRECTION_MATRIX
 } 
 #endif
 
@@ -224,6 +241,14 @@ void Config_RetrieveSettings()
         #endif
         EEPROM_READ_VAR(i,lcd_contrast);
 
+        #ifdef SAVE_G29_CORRECTION_MATRIX
+          #ifdef NONLINEAR_BED_LEVELING
+            for (int y = 0; y < ACCURATE_BED_LEVELING_POINTS; y++)
+              for (int x = 0; x < ACCURATE_BED_LEVELING_POINTS; x++)
+                EEPROM_READ_VAR(i, bed_level[x][y]);
+          #endif//NONLINEAR_BED_LEVELING
+        #endif//SAVE_G29_CORRECTION_MATRIX
+
 		// Call updatePID (similar to when we have processed M301)
 		updatePID();
         SERIAL_ECHO_START;
@@ -280,6 +305,11 @@ void Config_ResetDefault()
 #ifdef DOGLCD
     lcd_contrast = DEFAULT_LCD_CONTRAST;
 #endif
+#ifdef SAVE_G29_CORRECTION_MATRIX
+  #ifdef NONLINEAR_BED_LEVELING
+    reset_bed_level();
+  #endif//NONLINEAR_BED_LEVELING
+#endif//SAVE_G29_CORRECTION_MATRIX
 #ifdef PIDTEMP
     Kp = DEFAULT_Kp;
     Ki = scalePID_i(DEFAULT_Ki);

@@ -169,6 +169,8 @@ void manage_inactivity();
 
 enum AxisEnum {X_AXIS=0, Y_AXIS=1, Z_AXIS=2, E_AXIS=3};
 
+void print_bed_level();
+void reset_bed_level();
 
 void FlushSerialRequestResend();
 void ClearToSend();
@@ -220,6 +222,10 @@ extern int fanSpeed;
 #ifdef BARICUDA
 extern int ValvePressure;
 extern int EtoPPressure;
+#endif
+
+#ifdef NONLINEAR_BED_LEVELING
+extern float bed_level[ACCURATE_BED_LEVELING_POINTS][ACCURATE_BED_LEVELING_POINTS];
 #endif
 
 #ifdef FAN_SOFT_PWM

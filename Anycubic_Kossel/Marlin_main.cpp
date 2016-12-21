@@ -1126,7 +1126,7 @@ static void extrapolate_unprobed_bed_level() {
 }
 
 // Print calibration results for plotting or manual frame adjustment.
-static void print_bed_level() {
+void print_bed_level() {
   for (int y = 0; y < ACCURATE_BED_LEVELING_POINTS; y++) {
     for (int x = 0; x < ACCURATE_BED_LEVELING_POINTS; x++) {
       SERIAL_PROTOCOL_F(bed_level[x][y], 2);
@@ -1137,7 +1137,7 @@ static void print_bed_level() {
 }
 
 // Reset calibration results to zero.
-static void reset_bed_level() {
+void reset_bed_level() {
   for (int y = 0; y < ACCURATE_BED_LEVELING_POINTS; y++) {
     for (int x = 0; x < ACCURATE_BED_LEVELING_POINTS; x++) {
       bed_level[x][y] = 0.0;
@@ -1318,13 +1318,18 @@ void process_commands()
       break;
       #endif //FWRETRACT
     case 28: //G28 Home all Axis one at a time
-#ifdef ENABLE_AUTO_BED_LEVELING
-      plan_bed_level_matrix.set_to_identity();  //Reset the plane ("erase" all leveling data)
-#endif //ENABLE_AUTO_BED_LEVELING
 
-#ifdef NONLINEAR_BED_LEVELING
-      reset_bed_level();
-#endif //NONLINEAR_BED_LEVELING
+      // if SAVE_G29_CORRECTION_MATRIX is enabled, we will use the stored values and will not reset
+      // the bed level matrix on home
+      #ifndef SAVE_G29_CORRECTION_MATRIX
+        #ifdef ENABLE_AUTO_BED_LEVELING
+              plan_bed_level_matrix.set_to_identity();  //Reset the plane ("erase" all leveling data)
+        #endif //ENABLE_AUTO_BED_LEVELING
+        
+        #ifdef NONLINEAR_BED_LEVELING
+              reset_bed_level();
+        #endif //NONLINEAR_BED_LEVELING
+      #endif//SAVE_G29_CORRECTION_MATRIX
 
       saved_feedrate = feedrate;
       saved_feedmultiply = feedmultiply;

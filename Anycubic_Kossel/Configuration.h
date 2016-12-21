@@ -377,6 +377,9 @@ const bool Z_MAX_ENDSTOP_INVERTING = false; // set to true to invert the logic o
 
 #ifdef ENABLE_AUTO_BED_LEVELING
 
+  // define this to save/restore the G29 correction matrix from EEPROM
+  #define SAVE_G29_CORRECTION_MATRIX
+
   // these are the positions on the bed to do the probing
   // the probable radius below has been reduced to 60mm inside the printable radius
   #define DELTA_PROBABLE_RADIUS (DELTA_PRINTABLE_RADIUS-60)
@@ -495,7 +498,7 @@ const bool Z_MAX_ENDSTOP_INVERTING = false; // set to true to invert the logic o
 // M501 - reads parameters from EEPROM (if you need reset them after you changed them temporarily).
 // M502 - reverts to the default "factory settings".  You still need to store them in EEPROM afterwards if you want to.
 //define this to enable EEPROM support
-//#define EEPROM_SETTINGS
+#define EEPROM_SETTINGS
 //to disable EEPROM Serial responses and decrease program space by ~1700 byte: comment this out:
 // please keep turned on if you can.
 //#define EEPROM_CHITCHAT
